@@ -1,0 +1,17 @@
+{% extends 'ByteGuard_ai/base.html' %}
+
+{% block content %}
+<section class="panel">
+    <h1>Remediation Recommendations</h1>
+    <p>Reviewable patch guidance for responsible infrastructure hardening.</p>
+    <div class="remediation-grid">
+        {% for item in recommendations %}
+        <article class="remediation-card">
+            <h3>{{ item.name }}</h3>
+            <span class="tag">{{ item.type }}</span>
+            <p>{{ item.detail }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

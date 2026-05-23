@@ -1,0 +1,18 @@
+{% extends 'ByteGuard_ai/base.html' %}
+
+{% block content %}
+<section class="panel">
+    <h1>Risk Explanation</h1>
+    <p>Operational summaries generated from attack path and graph analysis.</p>
+    <div class="explanation-grid">
+        {% for item in explanations %}
+        <article class="explanation-card">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.summary }}</p>
+            <strong>Impact:</strong>
+            <p>{{ item.impact }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

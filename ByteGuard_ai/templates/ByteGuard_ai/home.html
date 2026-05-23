@@ -1,0 +1,33 @@
+{% extends 'ByteGuard_ai/base.html' %}
+
+{% block content %}
+<section class="hero">
+    <h1>ByteGuard AI</h1>
+    <p>Autonomous cyber defense infrastructure for cloud-native and hybrid environments.</p>
+    <div class="hero-actions">
+        <a class="button" href="{% url 'dashboard' %}">Open Dashboard</a>
+        <a class="button button-secondary" href="{% url 'attack_paths' %}">View Attack Paths</a>
+    </div>
+</section>
+
+<section class="features">
+    <h2>Designed to answer what traditional tools cannot</h2>
+    <div class="cards">
+        {% for feature in features %}
+        <article class="card">
+            <h3>{{ feature }}</h3>
+            <p>Designed for operational clarity, speed, and continuous validation.</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="overview">
+    <h2>Why ByteGuard AI?</h2>
+    <ul>
+        <li>Model attacker movement through infrastructure graph topology.</li>
+        <li>Prioritize risk based on exploitability, not just CVE counts.</li>
+        <li>Generate human-reviewable remediation guidance instead of raw alerts.</li>
+    </ul>
+</section>
+{% endblock %}

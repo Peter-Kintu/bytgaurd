@@ -1,0 +1,21 @@
+{% extends 'ByteGuard_ai/base.html' %}
+
+{% block content %}
+<section class="panel">
+    <h1>Attack Path Analysis</h1>
+    <p>Simulated attacker movement through your current infrastructure graph.</p>
+    <div class="path-grid">
+        {% for path in attack_paths %}
+        <article class="path-card">
+            <h3>{{ path.name }}</h3>
+            <div class="path-meta">
+                <span class="badge badge-{{ path.criticality|lower }}">{{ path.criticality }}</span>
+                <span>{{ path.window }} compromise window</span>
+                <span>Status: {{ path.status }}</span>
+            </div>
+            <p>{{ path.recommendation }}</p>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

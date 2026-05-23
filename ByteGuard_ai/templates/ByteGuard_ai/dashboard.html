@@ -1,0 +1,43 @@
+{% extends 'ByteGuard_ai/base.html' %}
+
+{% block content %}
+<section class="panel">
+    <h1>Operational Dashboard</h1>
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <h2>{{ summary.active_assets }}</h2>
+            <p>Active assets mapped</p>
+        </div>
+        <div class="metric-card">
+            <h2>{{ summary.attack_paths }}</h2>
+            <p>Recent attack paths</p>
+        </div>
+        <div class="metric-card">
+            <h2>{{ summary.critical_paths }}</h2>
+            <p>Critical paths</p>
+        </div>
+        <div class="metric-card">
+            <h2>{{ summary.remediation_suggestions }}</h2>
+            <p>Open remediation recommendations</p>
+        </div>
+    </div>
+
+    <div class="panel-block">
+        <h2>Latest graph refresh</h2>
+        <p>{{ summary.last_refresh|date:'N j, Y, P' }}</p>
+    </div>
+
+    <div class="panel-block">
+        <h2>Active attack paths</h2>
+        <ul class="list-clean">
+            {% for path in paths %}
+            <li>
+                <strong>{{ path.name }}</strong>
+                <span class="badge badge-{{ path.criticality|lower }}">{{ path.criticality }}</span>
+                <p>{{ path.recommendation }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+{% endblock %}
