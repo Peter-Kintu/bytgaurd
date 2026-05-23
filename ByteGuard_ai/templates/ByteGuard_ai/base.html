@@ -9,13 +9,11 @@
 </head>
 <body>
     <header class="site-header">
-        <div class="container">
-            <a class="brand" href="{% url 'home' %}">ByteGuard AI</a>
+        <div class="container header-row">
+            <a class="brand" href="{% url 'home' %}">ByteGuard</a>
             <nav class="site-nav">
-                <a href="{% url 'dashboard' %}">Dashboard</a>
-                <a href="{% url 'attack_paths' %}">Attack Paths</a>
-                <a href="{% url 'risk_explanation' %}">Risk Explanation</a>
-                <a href="{% url 'remediation' %}">Remediation</a>
+                <a href="{% url 'dashboard' %}">Report</a>
+                <a href="{% url 'remediation' %}">Fix</a>
             </nav>
         </div>
     </header>
@@ -25,8 +23,9 @@
     </main>
 
     <footer class="site-footer">
-        <div class="container">
-            <p>ByteGuard AI — continuous infrastructure resilience validation.</p>
+        <div class="container footer-row">
+            <p>ByteGuard AI</p>
+            <p>Minimal security, clear action.</p>
         </div>
     </footer>
 </body>

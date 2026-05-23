@@ -2,32 +2,33 @@
 
 {% block content %}
 <section class="hero">
-    <h1>ByteGuard AI</h1>
-    <p>Autonomous cyber defense infrastructure for cloud-native and hybrid environments.</p>
-    <div class="hero-actions">
-        <a class="button" href="{% url 'dashboard' %}">Open Dashboard</a>
-        <a class="button button-secondary" href="{% url 'attack_paths' %}">View Attack Paths</a>
+    <div class="hero-copy">
+        <p class="eyebrow">BYTEGUARD</p>
+        <h1>Resilience in a single search.</h1>
+        <p class="lead">Minimal. Clear. Every action has purpose.</p>
     </div>
-</section>
 
-<section class="features">
-    <h2>Designed to answer what traditional tools cannot</h2>
-    <div class="cards">
-        {% for feature in features %}
-        <article class="card">
-            <h3>{{ feature }}</h3>
-            <p>Designed for operational clarity, speed, and continuous validation.</p>
+    <form class="search-panel" action="{% url 'dashboard' %}" method="get">
+        <input type="search" name="q" placeholder="Search assets, paths, or incidents" autocomplete="off" />
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="attach-panel">
+        <label for="file-upload">Attach files</label>
+        <input id="file-upload" type="file" multiple />
+    </div>
+
+    <div class="action-grid">
+        <article class="action-card">
+            <h2>REPORT</h2>
+            <p>Open the latest risk summary and attack path review.</p>
+            <a class="button-action" href="{% url 'dashboard' %}">Open report</a>
         </article>
-        {% endfor %}
+        <article class="action-card">
+            <h2>FIX</h2>
+            <p>Review remediation guidance and patch options.</p>
+            <a class="button-action" href="{% url 'remediation' %}">Open fix</a>
+        </article>
     </div>
-</section>
-
-<section class="overview">
-    <h2>Why ByteGuard AI?</h2>
-    <ul>
-        <li>Model attacker movement through infrastructure graph topology.</li>
-        <li>Prioritize risk based on exploitability, not just CVE counts.</li>
-        <li>Generate human-reviewable remediation guidance instead of raw alerts.</li>
-    </ul>
 </section>
 {% endblock %}
