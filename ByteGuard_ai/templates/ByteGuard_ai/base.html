@@ -3,30 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ByteGuard AI</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'ByteGuard_ai/styles.css' %}">
+    <title>ByteGuard AI // Premium SecOps Environment</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: #090D1A;
+            color: #F1F5F9;
+            font-family: 'Syne', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .global-header {
+            background: #121829;
+            border-bottom: 1px solid #24325C;
+            padding: 1.25rem 2rem;
+        }
+
+        .header-content-wrapper {
+            max-width: 1650px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo-mark {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #F1F5F9;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .brand-logo-mark span { color: #3B82F6; }
+
+        .global-navigation-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .global-navigation-links a {
+            color: #94A3B8;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.15s ease;
+        }
+        .global-navigation-links a:hover { color: #F1F5F9; }
+
+        .main-workspace-container {
+            flex: 1;
+            width: 100%;
+        }
+
+        .global-footer {
+            background: #0C101F;
+            border-top: 1px solid #1A233D;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748B;
+        }
+    </style>
 </head>
 <body>
-    <header class="site-header">
-        <div class="container header-row">
-            <a class="brand" href="{% url 'home' %}">ByteGuard</a>
-            <nav class="site-nav">
-                <a href="{% url 'dashboard' %}">Report</a>
-                <a href="{% url 'remediation' %}">Fix</a>
+
+    <header class="global-header">
+        <div class="header-content-wrapper">
+            <a href="{% url 'home' %}" class="brand-logo-mark">BYTEGUARD <span>AI</span></a>
+            <nav class="global-navigation-links">
+                <a href="{% url 'dashboard' %}">Command Center</a>
             </nav>
         </div>
     </header>
 
-    <main class="container">
+    <main class="main-workspace-container">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="site-footer">
-        <div class="container footer-row">
-            <p>ByteGuard AI</p>
-            <p>Minimal security, clear action.</p>
-        </div>
+    <footer class="global-footer">
+        <div>&copy; 2026 ByteGuard AI Orchestrator Core Environment Labs. All rights reserved.</div>
     </footer>
+
 </body>
 </html>
