@@ -1,0 +1,36 @@
+{% extends 'ByteGuard_ai/base.html' %}
+
+{% block content %}
+<section class="scan-detail">
+    <h1>OmniScan Result</h1>
+    <div class="scan-summary">
+        <p><strong>Target:</strong> {{ scan.target_identifier }}</p>
+        <p><strong>Domain:</strong> {{ scan.get_target_type_display }}</p>
+        <p><strong>Status:</strong> {{ scan.get_status_display }}</p>
+        <p><strong>Created:</strong> {{ scan.created_at }}</p>
+        <p><strong>Updated:</strong> {{ scan.updated_at }}</p>
+    </div>
+
+    <section class="scan-output">
+        <h2>Raw Probe Output</h2>
+        <pre>{{ scan.raw_probe_output }}</pre>
+    </section>
+
+    <section class="scan-output">
+        <h2>Vulnerabilities Found</h2>
+        <pre>{{ scan.vulnerabilities_found }}</pre>
+    </section>
+
+    <section class="scan-output">
+        <h2>Remediation Plan</h2>
+        <pre>{{ scan.remediation_plan }}</pre>
+    </section>
+
+    {% if scan.execution_script %}
+    <section class="scan-output">
+        <h2>Execution Script</h2>
+        <pre>{{ scan.execution_script }}</pre>
+    </section>
+    {% endif %}
+</section>
+{% endblock %}

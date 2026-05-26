@@ -1,0 +1,23 @@
+{% extends 'ByteGuard_ai/base.html' %}
+
+{% block content %}
+<section class="scan-form">
+    <h1>Autonomous OmniScan</h1>
+    <p>Execute a cross-domain diagnostic scan and let the AI plan remediation.</p>
+
+    <form method="post" action="{% url 'omni_scan' %}">
+        {% csrf_token %}
+        <label for="target_type">Target Domain</label>
+        <select id="target_type" name="target_type" required>
+            <option value="WEBSITE">Website / Web Application</option>
+            <option value="SYSTEM">System Network or Source Code</option>
+            <option value="HARDWARE">Hardware Firmware Binaries</option>
+        </select>
+
+        <label for="target_identifier">Target Identifier</label>
+        <input id="target_identifier" name="target_identifier" type="text" placeholder="URL, IP Address, Directory Path, or Firmware File Path" required />
+
+        <button type="submit">Start Scan</button>
+    </form>
+</section>
+{% endblock %}
