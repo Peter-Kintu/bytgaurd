@@ -184,7 +184,7 @@ Schema:
     user_msg = f"Target Reference: {target}\nAnalysis Mode: {mode}\nScope Strategy: {depth}\n{('Contextual Architecture Logs:\n' + context) if context else ''}\n\nGenerate the structural JSON evaluation report."
 
     payload = json.dumps({
-        'model': 'llama3.1-8b-instruct',
+        'model': 'llama3.1-8b',
         'max_completion_tokens': 3500,
         'temperature': 0.1,
         'top_p': 1,
@@ -338,7 +338,7 @@ def execute_omni_agent(request):
                     'content': f'TARGET CLASSIFICATION: {target_type}\nRAW PROBE DATA:\n{probe_log}',
                 },
             ],
-            model='llama3.1-70b',
+            model='llama-3.3-70b',
             max_completion_tokens=4096,
             temperature=0.0,
             top_p=1,
