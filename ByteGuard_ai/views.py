@@ -184,7 +184,7 @@ Schema:
     user_msg = f"Target Reference: {target}\nAnalysis Mode: {mode}\nScope Strategy: {depth}\n{('Contextual Architecture Logs:\n' + context) if context else ''}\n\nGenerate the structural JSON evaluation report."
 
     payload = json.dumps({
-        'model': 'llama3.1-8b',
+        'model': 'llama3.1-8b-instruct',
         'max_completion_tokens': 3500,
         'temperature': 0.1,
         'top_p': 1,
@@ -209,7 +209,13 @@ Schema:
         with urllib.request.urlopen(req, timeout=90) as resp:
             cerebras_data = json.loads(resp.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
-        return JsonResponse({'error': f'API Error {e.code}: Operational exception encountered.'}, status=502)
+        err_body = e.read().decode('utf-8', errors='ignore')
+        print('--- Cerebras upstream HTTPError ---')
+        print(err_body)
+        return JsonResponse(
+            {'error': f'Upstream API response error ({e.code}). Check model selection and API key formatting.'},
+            status=e.code,
+        )
     except urllib.error.URLError as e:
         return JsonResponse({'error': f'Upstream communication failure: {e.reason}'}, status=502)
 

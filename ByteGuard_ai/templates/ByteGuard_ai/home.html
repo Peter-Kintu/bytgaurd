@@ -10,7 +10,10 @@
 
     <form class="search-panel" action="{% url 'dashboard' %}" method="get">
         <input type="search" name="q" placeholder="Search assets, vulnerabilities, or incidents..." autocomplete="off" />
-        <button type="submit">Search</button>
+        <button type="submit" aria-label="Search">
+            <span class="search-label">Search</span>
+            <span class="search-icon">🔍</span>
+        </button>
     </form>
 
     <div class="action-grid">
