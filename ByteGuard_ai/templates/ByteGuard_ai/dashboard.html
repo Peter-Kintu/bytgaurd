@@ -1,43 +1,55 @@
 {% extends 'ByteGuard_ai/base.html' %}
 
 {% block content %}
-<section class="panel">
-    <h1>Operational Dashboard</h1>
-    <div class="metrics-grid">
-        <div class="metric-card">
-            <h2>{{ summary.active_assets }}</h2>
-            <p>Active assets mapped</p>
+<div class="container">
+    <section class="panel">
+        <h1>⚙️ Operational Dashboard</h1>
+        <p>Real-time overview of your security posture and threat landscape</p>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h2>{{ summary.active_assets }}</h2>
+                <p>Active Assets Mapped</p>
+            </div>
+            <div class="metric-card">
+                <h2>{{ summary.attack_paths }}</h2>
+                <p>Attack Paths Discovered</p>
+            </div>
+            <div class="metric-card">
+                <h2>{{ summary.critical_paths }}</h2>
+                <p>Critical Threats</p>
+            </div>
+            <div class="metric-card">
+                <h2>{{ summary.remediation_suggestions }}</h2>
+                <p>Recommendations</p>
+            </div>
         </div>
-        <div class="metric-card">
-            <h2>{{ summary.attack_paths }}</h2>
-            <p>Recent attack paths</p>
-        </div>
-        <div class="metric-card">
-            <h2>{{ summary.critical_paths }}</h2>
-            <p>Critical paths</p>
-        </div>
-        <div class="metric-card">
-            <h2>{{ summary.remediation_suggestions }}</h2>
-            <p>Open remediation recommendations</p>
-        </div>
-    </div>
 
-    <div class="panel-block">
-        <h2>Latest graph refresh</h2>
-        <p>{{ summary.last_refresh|date:'N j, Y, P' }}</p>
-    </div>
+        <div class="panel-block">
+            <h2>📅 Latest System Refresh</h2>
+            <p style="font-size: 1.1rem; color: var(--brand);">{{ summary.last_refresh|date:'F j, Y, P' }}</p>
+        </div>
 
-    <div class="panel-block">
-        <h2>Active attack paths</h2>
-        <ul class="list-clean">
-            {% for path in paths %}
-            <li>
-                <strong>{{ path.name }}</strong>
-                <span class="badge badge-{{ path.criticality|lower }}">{{ path.criticality }}</span>
-                <p>{{ path.recommendation }}</p>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-</section>
+        <div class="panel-block">
+            <h2>🚨 Active Attack Paths</h2>
+            <ul class="list-clean">
+                {% if paths %}
+                    {% for path in paths %}
+                    <li>
+                        <div>
+                            <strong>{{ path.name }}</strong>
+                            <p>{{ path.recommendation }}</p>
+                        </div>
+                        <span class="badge badge-{{ path.criticality|lower }}">{{ path.criticality }}</span>
+                    </li>
+                    {% endfor %}
+                {% else %}
+                    <li style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                        No active attack paths detected. Your environment is secure.
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </section>
+</div>
 {% endblock %}

@@ -1,18 +1,29 @@
 {% extends 'ByteGuard_ai/base.html' %}
 
 {% block content %}
-<section class="panel">
-    <h1>Risk Explanation</h1>
-    <p>Operational summaries generated from attack path and graph analysis.</p>
-    <div class="explanation-grid">
-        {% for item in explanations %}
-        <article class="explanation-card">
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.summary }}</p>
-            <strong>Impact:</strong>
-            <p>{{ item.impact }}</p>
-        </article>
-        {% endfor %}
-    </div>
-</section>
+<div class="container">
+    <section class="panel">
+        <h1>📋 Risk Explanation</h1>
+        <p>Detailed operational summaries from comprehensive attack path and graph analysis.</p>
+        
+        <div class="remediation-grid">
+            {% if explanations %}
+                {% for item in explanations %}
+                <article class="remediation-card">
+                    <h3>{{ item.title }}</h3>
+                    <p style="margin: var(--spacing-md) 0;">{{ item.summary }}</p>
+                    <div style="border-top: 1px solid var(--divider); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                        <p style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--spacing-sm);">Impact Assessment:</p>
+                        <p>{{ item.impact }}</p>
+                    </div>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div class="panel-block" style="text-align: center; grid-column: 1 / -1;">
+                    <p style="color: var(--text-secondary); font-size: 1rem;">No risk explanations available at this time.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
 {% endblock %}

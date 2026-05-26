@@ -1,412 +1,383 @@
-""
-            align-items: center;
-            max-width: 1600px;
-            margin: 0 auto 2rem auto;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
-        }
-        .logo-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .logo-title span { color: var(--brand); }
+{% extends 'ByteGuard_ai/base.html' %}
 
-        .control-panel {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.75rem;
-            height: fit-content;
-            position: sticky;
-            top: 2rem;
-        }
-        .panel-heading {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+{% block content %}
+<div class="container">
+    <section class="panel">
+        <h1>🔐 Security Audit Dashboard</h1>
+        <p>Configure and execute comprehensive security scanning with AI-powered analysis</p>
 
-        .form-group { margin-bottom: 1.25rem; }
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-        .input-ctrl, .select-ctrl, .textarea-ctrl {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-primary);
-            padding: 0.75rem;
-            font-family: var(--font-sans);
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
-        }
-        .textarea-ctrl {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            resize: vertical;
-            height: 120px;
-        }
-        .input-ctrl:focus, .select-ctrl:focus, .textarea-ctrl:focus {
-            outline: none;
-            border-color: var(--brand);
-            box-shadow: 0 0 0 3px var(--brand-glow);
-        }
-
-        .btn-launch {
-            width: 100%;
-            background: var(--brand);
-            color: var(--bg-main);
-            border: none;
-            border-radius: 6px;
-            padding: 1rem;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: transform 0.1s ease, opacity 0.2s ease;
-        }
-        .btn-launch:hover { opacity: 0.9; }
-        .btn-launch:active { transform: scale(0.98); }
-
-        .output-viewport { min-height: 700px; }
-        .empty-state {
-            border: 2px dashed var(--border);
-            border-radius: 12px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            text-align: center;
-            padding: 4rem;
-        }
-        .empty-state i { font-size: 3rem; margin-bottom: 1rem; color: var(--border); }
-
-        .results-container { display: none; }
-        .results-container.active { display: block; }
-
-        .summary-banner {
-            background: linear-gradient(135deg, #16223F 0%, #111A30 100%);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-        .metrics { display: flex; gap: 3rem; }
-        .metric-block .val { font-size: 2.25rem; font-weight: 700; font-family: var(--font-mono); }
-        .metric-block .lbl { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
-        .score-radial {
-            width: 80px; height: 80px; border-radius: 50%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 4px solid var(--border); font-family: var(--font-mono);
-        }
-        .score-radial .num { font-size: 1.5rem; font-weight: 700; }
-        .score-radial .label { font-size: 0.6rem; text-transform: uppercase; color: var(--text-secondary); }
-
-        .section-title {
-            font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;
-            display: flex; align-items: center; gap: 0.5rem;
-        }
-        .vuln-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            overflow: hidden;
-        }
-        .vuln-header {
-            padding: 1.25rem; background: rgba(255,255,255,0.02);
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; user-select: none;
-        }
-        .vuln-meta-left { display: flex; align-items: center; gap: 1rem; }
-        .badge {
-            font-size: 0.75rem; font-weight: 700; font-family: var(--font-mono);
-            padding: 0.25rem 0.6rem; border-radius: 4px; text-transform: uppercase;
-        }
-        .badge.critical { background: rgba(239,68,68,0.15); color: var(--crit); border: 1px solid var(--crit); }
-        .badge.high { background: rgba(249,115,22,0.15); color: var(--high); border: 1px solid var(--high); }
-        .badge.medium { background: rgba(245,158,11,0.15); color: var(--med); border: 1px solid var(--med); }
-        .badge.low { background: rgba(16,185,129,0.15); color: var(--low); border: 1px solid var(--low); }
-        .vuln-title { font-weight: 600; font-size: 1rem; }
-        .vuln-body {
-            padding: 1.5rem; border-top: 1px solid var(--border); display: none;
-            background: #101626;
-        }
-        .vuln-card.expanded .vuln-body { display: block; }
-        .grid-details {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;
-        }
-        .detail-item h5 { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.35rem; }
-        .detail-item p { font-size: 0.95rem; line-height: 1.5; color: #D1D5DB; }
-        .code-diff-container {
-            border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
-            font-family: var(--font-mono); font-size: 0.85rem; margin-top: 1rem;
-        }
-        .diff-banner {
-            background: var(--bg-input); padding: 0.5rem 1rem;
-            font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary);
-            border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;
-        }
-        .diff-window {
-            background: #070A12; padding: 1rem; overflow-x: auto; white-space: pre; color: #A7F3D0;
-        }
-        .loader { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 400px; }
-        .spinner {
-            width: 50px; height: 50px; border: 3px solid var(--border); border-top-color: var(--brand);
-            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1.5rem;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
-</head>
-<body>
-
-    <nav class="navbar">
-        <div class="logo-title"><i class="ti ti-shield-code"></i> BYTEGUARD <span>AI</span></div>
-        <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-mono)">SYSTEMS_COMMAND_V3.1</div>
-    </nav>
-
-    <main class="workspace-grid">
-        <section class="control-panel">
-            <div class="panel-heading"><i class="ti ti-adjustments-horizontal"></i> Configuration Panel</div>
-            <div class="form-group">
-                <label for="modeInput">Scan Scope / Architecture Type</label>
-                <select class="select-ctrl" id="modeInput">
-                    <option value="website">Website / Web App Domain</option>
-                    <option value="code">Source Code Infrastructure</option>
-                    <option value="system">Linux / Cloud Infrastructure</option>
-                    <option value="hardware">Hardware / IoT Firmware Module</option>
-                    <option value="network">Enterprise Network Layout</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="targetInput">Target Identifier</label>
-                <input type="text" class="input-ctrl" id="targetInput" placeholder="e.g. staging-cluster.internal">
-            </div>
-            <div class="form-group">
-                <label for="depthInput">Analysis Depth Profiles</label>
-                <select class="select-ctrl" id="depthInput">
-                    <option value="quick">Quick Strategy (Top Risks Only)</option>
-                    <option value="standard" selected>Standard Enterprise Compliance Profile</option>
-                    <option value="deep">Exhaustive System Dependencies Matrix</option>
-                    <option value="pentest">Adversary Tactics Emulation Pathing</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="contextInput">Diagnostic Logs / System Context (Optional)</label>
-                <textarea class="textarea-ctrl" id="contextInput" placeholder="Paste local configuration files, environment definitions, or network route maps here..."></textarea>
-            </div>
-            <button class="btn-launch" onclick="executeOmniScan()"><i class="ti ti-terminal-2"></i> Launch Security Audit</button>
-        </section>
-
-        <section class="output-viewport">
-            <div class="empty-state" id="emptyState">
-                <i class="ti ti-radar"></i>
-                <h3>No Targets Evaluated</h3>
-                <p style="margin-top: 0.5rem; max-width: 400px; font-size: 0.9rem;">Select your architectural target, map data logs inside the configuration control panel, and launch the audit sequence.</p>
-            </div>
-
-            <div class="loader" id="loaderState">
-                <div class="spinner"></div>
-                <h4 style="font-family: var(--font-mono); letter-spacing: 1px;">EVALUATING ARCHITECTURAL RISK METRICS...</h4>
-                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">Orchestrating context nodes via ultra-fast Cerebras Cloud framework</p>
-            </div>
-
-            <div class="results-container" id="resultsArea">
-                <div class="summary-banner">
-                    <div>
-                        <h2 id="outSummaryTitle" style="font-size: 1.4rem; font-weight:700; margin-bottom: 0.5rem;">Target Evaluation Profile</h2>
-                        <p id="outSummaryDesc" style="color: var(--text-secondary); font-size: 0.95rem; max-width: 600px; line-height:1.4;"></p>
-                    </div>
-                    <div class="score-radial" id="outScoreContainer">
-                        <div class="num" id="outScoreVal">0</div>
-                        <div class="label">Risk Index</div>
-                    </div>
+        <div style="display: grid; grid-template-columns: 300px 1fr; gap: var(--spacing-xl); margin-top: var(--spacing-xl); align-items: start;">
+            <!-- Control Panel -->
+            <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--spacing-lg); height: fit-content; position: sticky; top: 100px;">
+                <div style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-weight: 600;">⚙️ Configuration</div>
+                
+                <div class="form-group">
+                    <label for="modeInput">Scan Scope</label>
+                    <select class="select-field" id="modeInput">
+                        <option value="website">Website / Web Application</option>
+                        <option value="code">Source Code & Infrastructure</option>
+                        <option value="system">System / Cloud Infrastructure</option>
+                        <option value="hardware">Hardware / IoT Firmware</option>
+                        <option value="network">Enterprise Network</option>
+                    </select>
                 </div>
 
-                <div class="section-title"><i class="ti ti-alert-triangle" style="color: var(--high)"></i> Structural Gaps Detected</div>
-                <div id="vulnerabilitiesContainer" style="margin-bottom: 2rem;"></div>
+                <div class="form-group">
+                    <label for="targetInput">Target Identifier</label>
+                    <input id="targetInput" type="text" class="input-field" placeholder="URL, IP, path, etc." />
+                </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                    <div>
-                        <div class="section-title"><i class="ti ti-git-branch" style="color: var(--brand)"></i> Adversarial Action Vector Pathing</div>
-                        <div id="attackPathsContainer" class="control-panel" style="background: var(--bg-surface); font-size: 0.9rem; line-height: 1.6; color:#D1D5DB;"></div>
+                <div class="form-group">
+                    <label for="depthInput">Analysis Depth</label>
+                    <select class="select-field" id="depthInput">
+                        <option value="quick">Quick (Top Risks)</option>
+                        <option value="standard" selected>Standard (Full Profile)</option>
+                        <option value="deep">Exhaustive (All Details)</option>
+                        <option value="pentest">Adversary Emulation</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="contextInput">System Context (Optional)</label>
+                    <textarea class="textarea-field" id="contextInput" placeholder="Paste config files, env definitions, etc."></textarea>
+                </div>
+
+                <button class="btn btn-primary" onclick="executeOmniScan()" style="width: 100%; margin-top: var(--spacing-lg);">
+                    🚀 Launch Audit
+                </button>
+            </div>
+
+            <!-- Results Area -->
+            <div class="output-viewport">
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: var(--spacing-2xl); text-align: center; color: var(--text-secondary);">
+                    <div style="font-size: 3rem; margin-bottom: var(--spacing-lg);">📊</div>
+                    <h3 style="color: var(--text-primary); margin-bottom: var(--spacing-sm);">No Audit Executed</h3>
+                    <p>Select your target and analysis parameters, then launch the security audit to begin.</p>
+                </div>
+
+                <!-- Loading State -->
+                <div class="loader" id="loaderState" style="display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 400px;">
+                    <div class="spinner" style="width: 50px; height: 50px; border: 3px solid var(--border); border-top-color: var(--brand); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: var(--spacing-lg);"></div>
+                    <h4 style="color: var(--text-primary); font-family: var(--font-mono); letter-spacing: 1px;">EVALUATING SECURITY POSTURE...</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: var(--spacing-md);">Processing architectural risk metrics</p>
+                </div>
+
+                <!-- Results Container -->
+                <div class="results-container" id="resultsArea">
+                    <!-- Summary Banner -->
+                    <div style="background: linear-gradient(135deg, #f0f4f8, #ffffff); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--spacing-xl); display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xl); box-shadow: var(--shadow-sm);">
+                        <div>
+                            <h2 id="outSummaryTitle" style="font-size: 1.4rem; font-weight: 700; margin-bottom: var(--spacing-sm); color: var(--text-primary);">Target Evaluation</h2>
+                            <p id="outSummaryDesc" style="color: var(--text-secondary); font-size: 0.95rem; max-width: 600px;"></p>
+                        </div>
+                        <div style="width: 100px; height: 100px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid var(--brand); font-family: var(--font-mono); background: linear-gradient(135deg, #f0f9ff, #ffffff);">
+                            <div id="outScoreVal" style="font-size: 2rem; font-weight: 700; color: var(--brand);">0</div>
+                            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 1px;">Risk Score</div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="section-title"><i class="ti ti-shield-check" style="color: var(--low)"></i> Remediation Architecture Map</div>
-                        <div id="remediationPlanContainer" class="control-panel" style="background: var(--bg-surface); padding: 1rem;"></div>
+
+                    <!-- Vulnerabilities Section -->
+                    <div class="panel-block">
+                        <h2>⚠️ Vulnerabilities Found</h2>
+                        <div id="vulnerabilitiesContainer"></div>
+                    </div>
+
+                    <!-- Attack Paths and Remediation -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg); margin-top: var(--spacing-xl);">
+                        <div class="panel-block">
+                            <h2>🗺️ Attack Paths</h2>
+                            <div id="attackPathsContainer" style="background: var(--bg-surface); border-radius: var(--radius-md); padding: var(--spacing-lg); font-size: 0.9rem; line-height: 1.6;"></div>
+                        </div>
+                        <div class="panel-block">
+                            <h2>🔧 Remediations</h2>
+                            <div id="remediationPlanContainer" style="background: var(--bg-surface); border-radius: var(--radius-md); padding: var(--spacing-lg); font-size: 0.9rem; line-height: 1.6;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+</div>
 
-    <script>
-        function toggleCard(headerElement) {
-            headerElement.parentElement.classList.toggle('expanded');
+<style>
+    .output-viewport { min-height: 500px; margin-top: var(--spacing-xl); }
+    .results-container { display: none; }
+    .results-container.active { display: block; }
+    
+    .vuln-card {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--spacing-lg);
+        overflow: hidden;
+    }
+    
+    .vuln-header {
+        padding: var(--spacing-lg);
+        background: var(--bg-surface);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        transition: background-color var(--transition-fast);
+    }
+    
+    .vuln-header:hover {
+        background-color: var(--bg-hover);
+    }
+    
+    .vuln-meta-left {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+    
+    .vuln-title {
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--text-primary);
+    }
+    
+    .vuln-body {
+        padding: var(--spacing-lg);
+        border-top: 1px solid var(--border);
+        display: none;
+        background: #ffffff;
+    }
+    
+    .vuln-card.expanded .vuln-body {
+        display: block;
+    }
+    
+    .detail-item {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .detail-item h5 {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: var(--spacing-sm);
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+    
+    .detail-item p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: var(--text-primary);
+    }
+    
+    .code-diff-container {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        margin-top: var(--spacing-lg);
+    }
+    
+    .diff-banner {
+        background: var(--bg-input);
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        font-weight: 600;
+    }
+    
+    .diff-window {
+        background: #f5f5f5;
+        padding: var(--spacing-lg);
+        overflow-x: auto;
+        white-space: pre;
+        color: #1a1a1a;
+        line-height: 1.4;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+
+<script>
+    function toggleCard(element) {
+        element.closest('.vuln-card').classList.toggle('expanded');
+    }
+
+    async function executeOmniScan() {
+        const target = document.getElementById('targetInput').value.trim();
+        const mode = document.getElementById('modeInput').value;
+        const depth = document.getElementById('depthInput').value;
+        const context = document.getElementById('contextInput').value.trim();
+
+        if (!target) {
+            alert('Please provide a target identifier');
+            return;
         }
 
-        async function executeOmniScan() {
-            const target = document.getElementById('targetInput').value.trim();
-            const mode = document.getElementById('modeInput').value;
-            const depth = document.getElementById('depthInput').value;
-            const context = document.getElementById('contextInput').value.trim();
+        document.getElementById('emptyState').style.display = 'none';
+        document.getElementById('resultsArea').classList.remove('active');
+        document.getElementById('loaderState').style.display = 'flex';
 
-            if (!target) {
-                alert('Please provide a target identifier to initiate operations.');
+        try {
+            const response = await fetch('/api/scan/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ target, mode, depth, context })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || data.error) {
+                alert('Error: ' + (data.error || 'Server error'));
+                resetToEmpty();
                 return;
             }
 
-            document.getElementById('emptyState').style.display = 'none';
-            document.getElementById('resultsArea').classList.remove('active');
-            document.getElementById('loaderState').style.display = 'flex';
+            renderDashboard(data);
+        } catch (err) {
+            alert('Connection error: ' + err.message);
+            resetToEmpty();
+        }
+    }
 
-            try {
-                const response = await fetch('/api/scan/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ target, mode, depth, context })
-                });
+    function resetToEmpty() {
+        document.getElementById('loaderState').style.display = 'none';
+        document.getElementById('emptyState').style.display = 'flex';
+    }
 
-                const data = await response.json();
+    function renderDashboard(data) {
+        document.getElementById('loaderState').style.display = 'none';
+        document.getElementById('resultsArea').classList.add('active');
 
-                if (!response.ok || data.error) {
-                    alert('Operational Fault Exception: ' + (data.error || 'Server processing error'));
-                    resetToEmpty();
-                    return;
-                }
+        document.getElementById('outSummaryDesc').innerText = data.target_summary || 'Evaluation complete';
+        const score = data.risk_score || 0;
+        document.getElementById('outScoreVal').innerText = score;
 
-                renderDashboard(data);
-
-            } catch (err) {
-                alert('Connection tracking pipeline exception: ' + err.message);
-                resetToEmpty();
-            }
+        const scoreRadial = document.getElementById('outScoreVal').parentElement;
+        if (score > 75) {
+            scoreRadial.style.borderColor = 'var(--critical)';
+            scoreRadial.style.color = 'var(--critical)';
+        } else if (score > 45) {
+            scoreRadial.style.borderColor = 'var(--warning)';
+            scoreRadial.style.color = 'var(--warning)';
+        } else {
+            scoreRadial.style.borderColor = 'var(--success)';
+            scoreRadial.style.color = 'var(--success)';
         }
 
-        function resetToEmpty() {
-            document.getElementById('loaderState').style.display = 'none';
-            document.getElementById('emptyState').style.display = 'flex';
+        renderVulnerabilities(data.vulnerabilities || []);
+        renderAttackPaths(data.attack_paths || []);
+        renderRemediations(data.remediation_plan || []);
+    }
+
+    function renderVulnerabilities(vulns) {
+        const container = document.getElementById('vulnerabilitiesContainer');
+        container.innerHTML = '';
+        
+        if (!vulns || vulns.length === 0) {
+            container.innerHTML = '<div style="padding: var(--spacing-xl); text-align: center; color: var(--text-secondary); background: var(--bg-surface); border-radius: var(--radius-md);">✓ No critical vulnerabilities found</div>';
+            return;
         }
 
-        function renderDashboard(data) {
-            document.getElementById('loaderState').style.display = 'none';
-            document.getElementById('resultsArea').classList.add('active');
+        vulns.forEach(v => {
+            const severityClass = (v.severity || 'LOW').toLowerCase();
+            const card = document.createElement('div');
+            card.className = 'vuln-card';
+            
+            const badgeColor = severityClass === 'critical' ? 'var(--critical)' : 
+                             severityClass === 'high' ? 'var(--warning)' :
+                             severityClass === 'medium' ? 'var(--info)' : 'var(--success)';
 
-            document.getElementById('outSummaryDesc').innerText = data.target_summary || 'Evaluation report finalized successfully.';
-            const score = data.risk_score || 0;
-            document.getElementById('outScoreVal').innerText = score;
-            const radial = document.getElementById('outScoreContainer');
-            radial.style.borderColor = score > 75 ? 'var(--crit)' : score > 45 ? 'var(--high)' : 'var(--low)';
-
-            const vulnContainer = document.getElementById('vulnerabilitiesContainer');
-            vulnContainer.innerHTML = '';
-            if (!data.vulnerabilities || data.vulnerabilities.length === 0) {
-                vulnContainer.innerHTML = '<div style="padding: 2rem; text-align: center; color: var(--text-secondary); background: var(--bg-surface); border-radius: 8px;">No critical misconfigurations isolated within current profile.</div>';
-            } else {
-                data.vulnerabilities.forEach(v => {
-                    const severityClass = (v.severity || 'LOW').toLowerCase();
-                    const card = document.createElement('div');
-                    card.className = 'vuln-card';
-                    card.innerHTML = `
-                        <div class="vuln-header" onclick="toggleCard(this)">
-                            <div class="vuln-meta-left">
-                                <span class="badge ${severityClass}">${v.severity}</span>
-                                <span class="vuln-title">${v.name}</span>
-                            </div>
-                            <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">CVSS ${v.cvss || 'N/A'} <i class="ti ti-chevron-down" style="margin-left:0.5rem"></i></div>
+            card.innerHTML = `
+                <div class="vuln-header" onclick="toggleCard(this)">
+                    <div class="vuln-meta-left">
+                        <span class="badge" style="background: ${badgeColor}20; color: ${badgeColor}; border: 1px solid ${badgeColor};">${v.severity || 'UNKNOWN'}</span>
+                        <div>
+                            <div class="vuln-title">${v.name || 'Unknown Vulnerability'}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-mono);">CVSS ${v.cvss || 'N/A'}</div>
                         </div>
-                        <div class="vuln-body">
-                            <div class="grid-details">
-                                <div class="detail-item">
-                                    <h5>Threat Explanation</h5>
-                                    <p>${v.description}</p>
-                                </div>
-                                <div class="detail-item">
-                                    <h5>Adversary Vector Scenario</h5>
-                                    <p>${v.exploit_scenario}</p>
-                                </div>
-                            </div>
-                            <div class="grid-details">
-                                <div class="detail-item">
-                                    <h5>Affected Architecture Boundary</h5>
-                                    <p style="font-family: var(--font-mono); font-size:0.85rem; background: var(--bg-input); padding:0.4rem; border-radius:4px; display:inline-block;">${v.affected_component || 'Global Target Namespace'}</p>
-                                </div>
-                                <div class="detail-item">
-                                    <h5>Remediation Guidelines</h5>
-                                    <p>${v.fix}</p>
-                                </div>
-                            </div>
-                            ${v.code_fix ? `
-                                <div class="code-diff-container">
-                                    <div class="diff-banner"><span>Remediation Configuration Snippet</span><span>Automated Fix</span></div>
-                                    <div class="diff-window">${escapeHtml(v.code_fix)}</div>
-                                </div>
-                            ` : ''}
+                    </div>
+                    <div style="font-size: 1.2rem; color: var(--text-tertiary);">▼</div>
+                </div>
+                <div class="vuln-body">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+                        <div class="detail-item">
+                            <h5>Description</h5>
+                            <p>${v.description || 'No description available'}</p>
                         </div>
-                    `;
-                    vulnContainer.appendChild(card);
-                });
-            }
-
-            const pathContainer = document.getElementById('attackPathsContainer');
-            pathContainer.innerHTML = '';
-            if (data.attack_paths && data.attack_paths.length > 0) {
-                data.attack_paths.forEach(p => {
-                    const el = document.createElement('div');
-                    el.style.marginBottom = '0.75rem';
-                    el.innerHTML = `<i class="ti ti-arrow-merge-both" style="color:var(--brand); margin-right: 0.5rem;"></i> ${p}`;
-                    pathContainer.appendChild(el);
-                });
-            } else {
-                pathContainer.innerText = 'No structured attack routes generated.';
-            }
-
-            const planContainer = document.getElementById('remediationPlanContainer');
-            planContainer.innerHTML = '';
-            if (data.remediation_plan && data.remediation_plan.length > 0) {
-                data.remediation_plan.forEach(r => {
-                    const el = document.createElement('div');
-                    el.style.padding = '0.75rem';
-                    el.style.borderBottom = '1px solid var(--border)';
-                    el.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; font-weight:600; font-size:0.9rem; margin-bottom:0.25rem;">
-                            <span>Priority ${r.priority}: ${r.title}</span>
-                            <span style="color: var(--brand); font-size:0.75rem; font-family:var(--font-mono);">Impact: ${r.impact}</span>
+                        <div class="detail-item">
+                            <h5>Exploit Scenario</h5>
+                            <p>${v.exploit_scenario || 'No scenario provided'}</p>
                         </div>
-                        <div style="color: var(--text-secondary); font-size: 0.8rem; line-height:1.4;">${r.description}</div>
-                    `;
-                    planContainer.appendChild(el);
-                });
-            } else {
-                planContainer.innerText = 'No system mitigation priorities generated.';
-            }
+                    </div>
+                    <div class="detail-item">
+                        <h5>Remediation</h5>
+                        <p>${v.fix || 'No fix available'}</p>
+                    </div>
+                    ${v.code_fix ? `
+                        <div class="code-diff-container">
+                            <div class="diff-banner"><span>Code Fix</span></div>
+                            <div class="diff-window">${escapeHtml(v.code_fix)}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function renderAttackPaths(paths) {
+        const container = document.getElementById('attackPathsContainer');
+        container.innerHTML = '';
+        
+        if (!paths || paths.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-secondary);">✓ No attack paths identified</p>';
+            return;
         }
 
-        function escapeHtml(string) {
-            return String(string).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        paths.forEach(p => {
+            const el = document.createElement('div');
+            el.style.marginBottom = 'var(--spacing-md)';
+            el.style.paddingBottom = 'var(--spacing-md)';
+            el.style.borderBottom = '1px solid var(--border)';
+            el.innerHTML = `<span style="color: var(--brand); font-weight: 600; margin-right: var(--spacing-sm);">→</span> ${p}`;
+            container.appendChild(el);
+        });
+    }
+
+    function renderRemediations(remediations) {
+        const container = document.getElementById('remediationPlanContainer');
+        container.innerHTML = '';
+        
+        if (!remediations || remediations.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-secondary);">No remediations generated</p>';
+            return;
         }
-    </script>
-</body>
-</html>
+
+        remediations.forEach(r => {
+            const el = document.createElement('div');
+            el.style.padding = 'var(--spacing-md)';
+            el.style.borderBottom = '1px solid var(--border)';
+            el.innerHTML = `
+                <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: var(--spacing-sm);">
+                    <span style="color: var(--text-primary);">${r.priority || 'Medium'}: ${r.title || 'Unknown'}</span>
+                    <span style="color: var(--success); font-size: 0.75rem; font-family: var(--font-mono);">Impact: ${r.impact || 'High'}</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4;">${r.description || ''}</div>
+            `;
+            container.appendChild(el);
+        });
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+</script>
+{% endblock %}

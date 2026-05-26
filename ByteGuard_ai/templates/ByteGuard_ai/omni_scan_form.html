@@ -1,23 +1,43 @@
 {% extends 'ByteGuard_ai/base.html' %}
 
 {% block content %}
-<section class="scan-form">
-    <h1>Autonomous OmniScan</h1>
-    <p>Execute a cross-domain diagnostic scan and let the AI plan remediation.</p>
+<div class="container-narrow">
+    <section class="panel" style="max-width: 600px; margin: 0 auto;">
+        <h1>🔍 Autonomous OmniScan</h1>
+        <p>Execute a comprehensive cross-domain diagnostic scan. The AI will analyze results and provide targeted remediation strategies.</p>
 
-    <form method="post" action="{% url 'omni_scan' %}">
-        {% csrf_token %}
-        <label for="target_type">Target Domain</label>
-        <select id="target_type" name="target_type" required>
-            <option value="WEBSITE">Website / Web Application</option>
-            <option value="SYSTEM">System Network or Source Code</option>
-            <option value="HARDWARE">Hardware Firmware Binaries</option>
-        </select>
+        <form method="post" action="{% url 'omni_scan' %}" style="margin-top: var(--spacing-xl);">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="target_type">Scan Target Domain <span class="required">*</span></label>
+                <select id="target_type" name="target_type" class="select-field" required>
+                    <option value="">-- Select a target domain --</option>
+                    <option value="WEBSITE">Website / Web Application</option>
+                    <option value="SYSTEM">System Network or Source Code</option>
+                    <option value="HARDWARE">Hardware / Firmware Binaries</option>
+                </select>
+            </div>
 
-        <label for="target_identifier">Target Identifier</label>
-        <input id="target_identifier" name="target_identifier" type="text" placeholder="URL, IP Address, Directory Path, or Firmware File Path" required />
+            <div class="form-group">
+                <label for="target_identifier">Target Identifier <span class="required">*</span></label>
+                <input 
+                    id="target_identifier" 
+                    name="target_identifier" 
+                    type="text" 
+                    class="input-field"
+                    placeholder="e.g., https://example.com, 192.168.1.0/24, /path/to/code"
+                    required 
+                />
+                <p style="margin-top: var(--spacing-sm); color: var(--text-tertiary); font-size: 0.85rem;">
+                    Enter a URL, IP address, file path, or firmware location
+                </p>
+            </div>
 
-        <button type="submit">Start Scan</button>
-    </form>
-</section>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--spacing-xl);">
+                🚀 Start Scan
+            </button>
+        </form>
+    </section>
+</div>
 {% endblock %}

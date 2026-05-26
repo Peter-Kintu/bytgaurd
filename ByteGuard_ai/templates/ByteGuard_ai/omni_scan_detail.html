@@ -1,36 +1,52 @@
 {% extends 'ByteGuard_ai/base.html' %}
 
 {% block content %}
-<section class="scan-detail">
-    <h1>OmniScan Result</h1>
-    <div class="scan-summary">
-        <p><strong>Target:</strong> {{ scan.target_identifier }}</p>
-        <p><strong>Domain:</strong> {{ scan.get_target_type_display }}</p>
-        <p><strong>Status:</strong> {{ scan.get_status_display }}</p>
-        <p><strong>Created:</strong> {{ scan.created_at }}</p>
-        <p><strong>Updated:</strong> {{ scan.updated_at }}</p>
-    </div>
+<div class="container">
+    <section class="panel">
+        <h1>📊 OmniScan Results</h1>
+        
+        <div style="background: linear-gradient(135deg, var(--bg-surface-alt), var(--bg-surface)); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
+                <div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: var(--spacing-sm);">TARGET</p>
+                    <p style="color: var(--text-primary); font-weight: 600; word-break: break-all;">{{ scan.target_identifier }}</p>
+                </div>
+                <div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: var(--spacing-sm);">DOMAIN TYPE</p>
+                    <p style="color: var(--text-primary); font-weight: 600;">{{ scan.get_target_type_display }}</p>
+                </div>
+                <div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: var(--spacing-sm);">STATUS</p>
+                    <span class="badge badge-{{ scan.get_status_display|lower }}">{{ scan.get_status_display }}</span>
+                </div>
+                <div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: var(--spacing-sm);">SCANNED</p>
+                    <p style="color: var(--text-primary); font-weight: 600;">{{ scan.created_at|date:'M d, Y' }}</p>
+                </div>
+            </div>
+        </div>
 
-    <section class="scan-output">
-        <h2>Raw Probe Output</h2>
-        <pre>{{ scan.raw_probe_output }}</pre>
-    </section>
+        <div class="panel-block">
+            <h2>🔍 Raw Probe Output</h2>
+            <pre style="background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--spacing-lg); overflow-x: auto; font-family: var(--font-mono); font-size: 0.85rem; color: #A7F3D0; line-height: 1.4;">{{ scan.raw_probe_output }}</pre>
+        </div>
 
-    <section class="scan-output">
-        <h2>Vulnerabilities Found</h2>
-        <pre>{{ scan.vulnerabilities_found }}</pre>
-    </section>
+        <div class="panel-block">
+            <h2>⚠️ Vulnerabilities Found</h2>
+            <pre style="background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--spacing-lg); overflow-x: auto; font-family: var(--font-mono); font-size: 0.85rem; color: #F87171; line-height: 1.4;">{{ scan.vulnerabilities_found }}</pre>
+        </div>
 
-    <section class="scan-output">
-        <h2>Remediation Plan</h2>
-        <pre>{{ scan.remediation_plan }}</pre>
-    </section>
+        <div class="panel-block">
+            <h2>🔧 Remediation Plan</h2>
+            <pre style="background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--spacing-lg); overflow-x: auto; font-family: var(--font-mono); font-size: 0.85rem; color: #86EFAC; line-height: 1.4;">{{ scan.remediation_plan }}</pre>
+        </div>
 
-    {% if scan.execution_script %}
-    <section class="scan-output">
-        <h2>Execution Script</h2>
-        <pre>{{ scan.execution_script }}</pre>
+        {% if scan.execution_script %}
+        <div class="panel-block">
+            <h2>📝 Execution Script</h2>
+            <pre style="background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--spacing-lg); overflow-x: auto; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); line-height: 1.4;">{{ scan.execution_script }}</pre>
+        </div>
+        {% endif %}
     </section>
-    {% endif %}
-</section>
+</div>
 {% endblock %}

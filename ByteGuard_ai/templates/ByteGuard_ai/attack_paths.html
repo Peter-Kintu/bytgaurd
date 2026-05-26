@@ -1,21 +1,30 @@
 {% extends 'ByteGuard_ai/base.html' %}
 
 {% block content %}
-<section class="panel">
-    <h1>Attack Path Analysis</h1>
-    <p>Simulated attacker movement through your current infrastructure graph.</p>
-    <div class="path-grid">
-        {% for path in attack_paths %}
-        <article class="path-card">
-            <h3>{{ path.name }}</h3>
-            <div class="path-meta">
-                <span class="badge badge-{{ path.criticality|lower }}">{{ path.criticality }}</span>
-                <span>{{ path.window }} compromise window</span>
-                <span>Status: {{ path.status }}</span>
-            </div>
-            <p>{{ path.recommendation }}</p>
-        </article>
-        {% endfor %}
-    </div>
-</section>
+<div class="container">
+    <section class="panel">
+        <h1>🗺️ Attack Path Analysis</h1>
+        <p>Simulated attacker movement chains through your infrastructure. Review critical paths and recommended mitigations.</p>
+        
+        <div class="remediation-grid">
+            {% if attack_paths %}
+                {% for path in attack_paths %}
+                <article class="remediation-card">
+                    <h3>{{ path.name }}</h3>
+                    <div style="margin: var(--spacing-md) 0; display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+                        <span class="badge badge-{{ path.criticality|lower }}">{{ path.criticality }}</span>
+                        <span style="padding: 0.35rem 0.75rem; background: var(--bg-input); border-radius: var(--radius-sm); font-size: 0.85rem;">{{ path.window }} window</span>
+                        <span style="padding: 0.35rem 0.75rem; background: var(--bg-input); border-radius: var(--radius-sm); font-size: 0.85rem;">{{ path.status }}</span>
+                    </div>
+                    <p>{{ path.recommendation }}</p>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div class="panel-block" style="text-align: center; grid-column: 1 / -1;">
+                    <p style="color: var(--text-secondary); font-size: 1rem;">No attack paths detected. Your environment appears secure.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
 {% endblock %}

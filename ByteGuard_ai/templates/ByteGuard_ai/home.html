@@ -3,36 +3,37 @@
 {% block content %}
 <section class="hero">
     <div class="hero-copy">
-        <p class="eyebrow">BYTEGUARD</p>
-        <h1>Resilience in a single search.</h1>
-        <p class="lead">Minimal. Clear. Every action has purpose.</p>
+        <p class="eyebrow">Welcome to ByteGuard</p>
+        <h1>Security Resilience at Your Fingertips</h1>
+        <p class="lead">Advanced threat analysis, attack path mapping, and automated remediation guidance powered by AI</p>
     </div>
 
     <form class="search-panel" action="{% url 'dashboard' %}" method="get">
-        <input type="search" name="q" placeholder="Search assets, paths, or incidents" autocomplete="off" />
+        <input type="search" name="q" placeholder="Search assets, vulnerabilities, or incidents..." autocomplete="off" />
         <button type="submit">Search</button>
     </form>
 
-    <div class="attach-panel">
-        <label for="file-upload">Attach files</label>
-        <input id="file-upload" type="file" multiple />
-    </div>
-
     <div class="action-grid">
         <article class="action-card">
-            <h2>REPORT</h2>
-            <p>Open the latest risk summary and attack path review.</p>
-            <a class="button-action" href="{% url 'dashboard' %}">Open report</a>
+            <div>
+                <h2>📊 Dashboard</h2>
+                <p>View your operational dashboard with real-time metrics, active threats, and a complete overview of your security posture.</p>
+            </div>
+            <a class="button-action" href="{% url 'dashboard' %}">Open Dashboard</a>
         </article>
         <article class="action-card">
-            <h2>FIX</h2>
-            <p>Review remediation guidance and patch options.</p>
-            <a class="button-action" href="{% url 'remediation' %}">Open fix</a>
+            <div>
+                <h2>🔧 Remediation</h2>
+                <p>Get actionable remediation guidance and patch recommendations to address vulnerabilities and strengthen your infrastructure.</p>
+            </div>
+            <a class="button-action" href="{% url 'remediation' %}">View Remediations</a>
         </article>
         <article class="action-card">
-            <h2>OMNI SCAN</h2>
-            <p>Launch an autonomous cross-domain scan powered by system toolkit probes and AI analysis.</p>
-            <a class="button-action" href="{% url 'omni_scan' %}">Launch scan</a>
+            <div>
+                <h2>🔍 Omni Scan</h2>
+                <p>Launch comprehensive cross-domain security scans powered by advanced AI analysis to discover hidden vulnerabilities.</p>
+            </div>
+            <a class="button-action" href="{% url 'omni_scan' %}">Start Scan</a>
         </article>
     </div>
 </section>

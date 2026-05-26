@@ -1,17 +1,26 @@
 {% extends 'ByteGuard_ai/base.html' %}
 
 {% block content %}
-<section class="panel">
-    <h1>Remediation Recommendations</h1>
-    <p>Reviewable patch guidance for responsible infrastructure hardening.</p>
-    <div class="remediation-grid">
-        {% for item in recommendations %}
-        <article class="remediation-card">
-            <h3>{{ item.name }}</h3>
-            <span class="tag">{{ item.type }}</span>
-            <p>{{ item.detail }}</p>
-        </article>
-        {% endfor %}
-    </div>
-</section>
+<div class="container">
+    <section class="panel">
+        <h1>🔧 Remediation Recommendations</h1>
+        <p>Strategic guidance and actionable steps to remediate vulnerabilities and strengthen your security posture</p>
+        
+        <div class="remediation-grid">
+            {% if recommendations %}
+                {% for item in recommendations %}
+                <article class="remediation-card">
+                    <h3>{{ item.name }}</h3>
+                    <span class="tag">{{ item.type }}</span>
+                    <p>{{ item.detail }}</p>
+                </article>
+                {% endfor %}
+            {% else %}
+                <div class="panel-block" style="text-align: center; grid-column: 1 / -1;">
+                    <p style="color: var(--text-secondary); font-size: 1rem;">No remediation recommendations at this time.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
 {% endblock %}
