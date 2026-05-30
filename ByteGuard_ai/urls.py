@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('api/scan', views.cerebras_scan, name='cerebras_scan_no_slash'),
     path('api/scan/', views.cerebras_scan, name='cerebras_scan'),
     path('attack-paths/', views.attack_paths, name='attack_paths'),
     path('risk-explanation/', views.risk_explanation, name='risk_explanation'),

@@ -1,14 +1,112 @@
 import json
+import logging
 import os
 import re
+import socket
+import ipaddress
+import http.client
 import urllib.request
 import urllib.error
+from urllib.parse import urlparse
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+
+logger = logging.getLogger(__name__)
+
+
+def _resolve_host(host):
+    try:
+        infos = socket.getaddrinfo(host, None)
+        return True, infos[0][4][0]
+    except socket.gaierror as exc:
+        return False, str(exc)
+
+
+def _is_public_address(address):
+    try:
+        ip = ipaddress.ip_address(address)
+        return not (ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_multicast or ip.is_link_local)
+    except ValueError:
+        return False
+
+
+def _probe_common_ports(host, resolved_ip):
+    common_ports = [80, 443, 22, 3389, 3306, 5432]
+    for port in common_ports:
+        try:
+            with socket.create_connection((resolved_ip, port), timeout=5):
+                return True, port
+        except Exception:
+            continue
+    return False, None
+
+
+def _verify_http_target(target):
+    if not re.match(r'^[a-zA-Z][a-zA-Z0-9+.-]*://', target):
+        target = 'http://' + target
+
+    parsed = urlparse(target)
+    if not parsed.hostname:
+        return False, None, 'Invalid website target format.'
+
+    if parsed.scheme not in ('http', 'https'):
+        return False, None, f'Unsupported URL scheme: {parsed.scheme}.'
+
+    path = parsed.path or '/'
+    if parsed.query:
+        path += '?' + parsed.query
+
+    resolved, resolved_ip = _resolve_host(parsed.hostname)
+    if not resolved:
+        return False, None, f'Host resolution failed: {resolved_ip}'
+
+    if not _is_public_address(resolved_ip):
+        return False, None, f'Resolved address {resolved_ip} is not a public internet host.'
+
+    port = parsed.port or (443 if parsed.scheme == 'https' else 80)
+    conn_cls = http.client.HTTPSConnection if parsed.scheme == 'https' else http.client.HTTPConnection
+    conn = conn_cls(parsed.hostname, port, timeout=8)
+    try:
+        conn.request('HEAD', path, headers={'User-Agent': 'ByteGuard/1.0'})
+        resp = conn.getresponse()
+        if resp.status == 405:
+            conn.close()
+            conn = conn_cls(parsed.hostname, port, timeout=8)
+            conn.request('GET', path, headers={'User-Agent': 'ByteGuard/1.0'})
+            resp = conn.getresponse()
+        resp.read()
+        return True, parsed.geturl(), (
+            f'{parsed.scheme.upper()} reachable at {resolved_ip}:{port} ({resp.status} {resp.reason})'
+        )
+    except Exception as exc:
+        return False, None, f'Connectivity check failed: {exc}'
+    finally:
+        conn.close()
+
+
+def _verify_host_target(target):
+    parsed = urlparse(target if re.match(r'^[a-zA-Z][a-zA-Z0-9+.-]*://', target) else '//' + target)
+    host = parsed.hostname or target.split('/')[0]
+    if not host:
+        return False, None, 'Invalid host target format.'
+
+    resolved, resolved_ip = _resolve_host(host)
+    if not resolved:
+        return False, None, f'Host resolution failed: {resolved_ip}'
+
+    if not _is_public_address(resolved_ip):
+        return False, None, f'Resolved address {resolved_ip} is not a public internet host.'
+
+    open_port, port = _probe_common_ports(host, resolved_ip)
+    if not open_port:
+        return False, None, 'Host resolved successfully but no common service ports were reachable on the public internet.'
+
+    return True, host, f'Resolved host to {resolved_ip}; service port {port} is reachable.'
+
 
 from .models import OmniScan
 
@@ -120,11 +218,22 @@ def cerebras_scan(request):
     depth = body.get('depth', 'standard')
     context = body.get('context', '').strip()
 
+    model_name = os.environ.get('CEREBRAS_MODEL', 'llama3.1-8b')
+
     if not target:
         return JsonResponse({'error': 'Target system identifier is required.'}, status=400)
 
-    if re.search(r'^(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)', target):
-        target = 'internal-network-isolated-node.local'
+    if mode == 'website':
+        valid, normalized_target, verification = _verify_http_target(target)
+    elif mode in ('system', 'network', 'hardware'):
+        valid, normalized_target, verification = _verify_host_target(target)
+    else:
+        valid, normalized_target, verification = True, target, 'No external reachability validation performed for code analysis mode.'
+
+    if not valid:
+        return JsonResponse({'error': f'Target validation failed: {verification}'}, status=400)
+
+    target = normalized_target
 
     mode_context = {
         'website': 'Analyze the web application architecture, application layer profiles, and security headers.',
@@ -142,8 +251,10 @@ def cerebras_scan(request):
     }.get(depth, 'Perform standard architectural security evaluation.')
 
     system_prompt = f"""You are ByteGuard AI, an elite enterprise security architecture intelligence engine.
-Your task is to analyze the target configuration profile: {mode_context}
+Your task is to analyze the verified live target configuration profile: {mode_context}
 Operational Depth: {depth_instr}
+
+The target has been validated as a reachable public internet host or website, and only confirmed infrastructure should be analyzed.
 
 You MUST return a single, valid JSON object matching the exact schema below.
 Do NOT wrap your response in markdown code blocks (no backticks, no ```json). Start directly with {{ and end with }}.
@@ -181,10 +292,17 @@ Schema:
   "compliance_gaps": ["List specific compliance shortfalls e.g., SOC2 Type II, ISO 27001, PCI-DSS, GDPR"]
 }}"""
 
-    user_msg = f"Target Reference: {target}\nAnalysis Mode: {mode}\nScope Strategy: {depth}\n{('Contextual Architecture Logs:\n' + context) if context else ''}\n\nGenerate the structural JSON evaluation report."
+    user_msg = (
+        f"Target Reference: {target}\n"
+        f"Verification: {verification}\n"
+        f"Analysis Mode: {mode}\n"
+        f"Scope Strategy: {depth}\n"
+        f"{('Contextual Architecture Logs:\n' + context) if context else ''}\n\n"
+        "Generate the structural JSON evaluation report."
+    )
 
     payload = json.dumps({
-        'model': 'llama3.1-8b',
+        'model': model_name,
         'max_completion_tokens': 3500,
         'temperature': 0.1,
         'top_p': 1,
@@ -216,10 +334,20 @@ Schema:
             cerebras_data = json.loads(resp.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
         err_body = e.read().decode('utf-8', errors='ignore')
-        print('--- Cerebras upstream HTTPError ---')
-        print(err_body)
+        upstream_message = err_body
+        try:
+            json_err = json.loads(err_body)
+            upstream_message = json_err.get('message') or json_err.get('error') or err_body
+        except json.JSONDecodeError:
+            pass
+        logger.error('Cerebras upstream HTTPError %s: %s', e.code, upstream_message)
         return JsonResponse(
-            {'error': f'Upstream API response error ({e.code}). Check model selection and API key formatting.'},
+            {
+                'error': (
+                    f'Upstream API response error ({e.code}). '
+                    f'Model={model_name}. {upstream_message}'
+                )
+            },
             status=e.code,
         )
     except urllib.error.URLError as e:
