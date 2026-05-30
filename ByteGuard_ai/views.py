@@ -218,7 +218,7 @@ def cerebras_scan(request):
     depth = body.get('depth', 'standard')
     context = body.get('context', '').strip()
 
-    model_name = os.environ.get('CEREBRAS_MODEL', 'llama3.1-8b')
+    model_name = os.environ.get('CEREBRAS_MODEL', 'llama3-8b-instruct')
 
     if not target:
         return JsonResponse({'error': 'Target system identifier is required.'}, status=400)
@@ -457,6 +457,7 @@ def execute_omni_agent(request):
         from cerebras.cloud.sdk import Cerebras
 
         client = Cerebras(api_key=os.environ.get('CEREBRAS_API_KEY'))
+        model_name = os.environ.get('CEREBRAS_MODEL', 'llama3-8b-instruct')
 
         completion = client.chat.completions.create(
             messages=[
@@ -466,7 +467,7 @@ def execute_omni_agent(request):
                     'content': f'TARGET CLASSIFICATION: {target_type}\nRAW PROBE DATA:\n{probe_log}',
                 },
             ],
-            model='llama-3.3-70b',
+            model=model_name,
             max_completion_tokens=4096,
             temperature=0.0,
             top_p=1,
