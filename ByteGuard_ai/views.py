@@ -5,6 +5,8 @@ import re
 import socket
 import ipaddress
 import http.client
+import subprocess
+import tempfile
 import urllib.request
 import urllib.error
 from urllib.parse import urlparse
@@ -19,7 +21,18 @@ from django.views.decorators.http import require_POST
 logger = logging.getLogger(__name__)
 
 CEREBRAS_API_KEY = getattr(settings, 'CEREBRAS_API_KEY', None)
-CEREBRAS_MODEL = getattr(settings, 'CEREBRAS_MODEL', None)
+CEREBRAS_MODEL = getattr(settings, 'CEREBRAS_MODEL', 'gpt-oss-120b')
+
+
+def _get_active_cerebras_model(model_name):
+    deprecated_models = {'llama3.1-8b', 'llama-3.3-70b'}
+    if model_name in deprecated_models:
+        logger.warning(
+            "Deprecated Cerebras model '%s' detected. Falling back to active model 'gpt-oss-120b'.",
+            model_name,
+        )
+        return 'gpt-oss-120b'
+    return model_name
 
 
 def _resolve_host(host):
@@ -233,7 +246,7 @@ def cerebras_scan(request):
             status=500,
         )
 
-    model_name = CEREBRAS_MODEL
+    model_name = _get_active_cerebras_model(CEREBRAS_MODEL)
 
     if not target:
         return JsonResponse({'error': 'Target system identifier is required.'}, status=400)
@@ -478,7 +491,7 @@ def execute_omni_agent(request):
             raise RuntimeError('CEREBRAS_API_KEY is not configured.')
 
         client = Cerebras(api_key=CEREBRAS_API_KEY)
-        model_name = CEREBRAS_MODEL
+        model_name = _get_active_cerebras_model(CEREBRAS_MODEL)
 
         completion = client.chat.completions.create(
             messages=[
