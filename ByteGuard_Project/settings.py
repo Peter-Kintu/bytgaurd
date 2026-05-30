@@ -121,7 +121,7 @@ STORAGES = {
 
 # Cerebras model configuration
 CEREBRAS_API_KEY = os.environ.get('CEREBRAS_API_KEY')
-CEREBRAS_MODEL = os.environ.get('CEREBRAS_MODEL', 'llama-3.3-70b')
+CEREBRAS_MODEL = os.environ.get('CEREBRAS_MODEL', 'gpt-oss-120b')
 
 
 # ─── 8. INTERFACE PRIMITIVES ─────────────────────────────────────────────────
