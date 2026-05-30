@@ -9,6 +9,7 @@ import urllib.request
 import urllib.error
 from urllib.parse import urlparse
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -16,6 +17,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 logger = logging.getLogger(__name__)
+
+CEREBRAS_API_KEY = getattr(settings, 'CEREBRAS_API_KEY', None)
+CEREBRAS_MODEL = getattr(settings, 'CEREBRAS_MODEL', None)
 
 
 def _resolve_host(host):
@@ -201,7 +205,7 @@ def dashboard(request):
 @csrf_exempt
 @require_POST
 def cerebras_scan(request):
-    api_key = os.environ.get('CEREBRAS_API_KEY', '')
+    api_key = CEREBRAS_API_KEY
     if not api_key:
         return JsonResponse(
             {'error': 'CEREBRAS_API_KEY is not configured on this server.'},
@@ -218,7 +222,18 @@ def cerebras_scan(request):
     depth = body.get('depth', 'standard')
     context = body.get('context', '').strip()
 
-    model_name = os.environ.get('CEREBRAS_MODEL', 'llama3-8b-instruct')
+    if not CEREBRAS_MODEL:
+        return JsonResponse(
+            {
+                'error': (
+                    'CEREBRAS_MODEL is not configured. '
+                    'Set the exact model name your Cerebras account can access.'
+                )
+            },
+            status=500,
+        )
+
+    model_name = CEREBRAS_MODEL
 
     if not target:
         return JsonResponse({'error': 'Target system identifier is required.'}, status=400)
@@ -456,8 +471,14 @@ def execute_omni_agent(request):
     try:
         from cerebras.cloud.sdk import Cerebras
 
-        client = Cerebras(api_key=os.environ.get('CEREBRAS_API_KEY'))
-        model_name = os.environ.get('CEREBRAS_MODEL', 'llama3-8b-instruct')
+        if not CEREBRAS_MODEL:
+            raise RuntimeError('CEREBRAS_MODEL is not configured.')
+
+        if not CEREBRAS_API_KEY:
+            raise RuntimeError('CEREBRAS_API_KEY is not configured.')
+
+        client = Cerebras(api_key=CEREBRAS_API_KEY)
+        model_name = CEREBRAS_MODEL
 
         completion = client.chat.completions.create(
             messages=[

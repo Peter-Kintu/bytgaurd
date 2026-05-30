@@ -119,6 +119,10 @@ STORAGES = {
     },
 }
 
+# Cerebras model configuration
+CEREBRAS_API_KEY = os.environ.get('CEREBRAS_API_KEY')
+CEREBRAS_MODEL = os.environ.get('CEREBRAS_MODEL', 'llama-3.3-70b')
+
 
 # ─── 8. INTERFACE PRIMITIVES ─────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
