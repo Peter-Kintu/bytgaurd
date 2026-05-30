@@ -106,7 +106,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Production directory hooks scanning for localized asset components
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'ByteGuard_ai', 'static'),
 ]
 
 # Advanced compression engine configurations for handling manifest asset logs
